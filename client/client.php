@@ -11,7 +11,7 @@
  * This script does not depend of any Moodle code,
  * and it can be called from a browser.
  *
- * @authorr Jerome Mouneyrac
+ * @author Kulverstukas, http://9v.lt
  */
 
 /// MOODLE ADMINISTRATION SETUP STEPS

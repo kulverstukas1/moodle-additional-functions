@@ -13,30 +13,17 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Web service local plugin template external functions and service definitions.
- *
- * @package    localwstemplate
- * @copyright  2011 Jerome Mouneyrac
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ /**
+ * Web service local plugin additional functions and service definitions.
+ * @author    Kulverstukas, http://9v.lt
  */
-
-// We defined the web service functions to install.
+ 
 $functions = array(
-        'local_wstemplate_hello_world' => array(
-                'classname'   => 'local_wstemplate_external',
-                'methodname'  => 'hello_world',
-                'classpath'   => 'local/wstemplate/externallib.php',
-                'description' => 'Return Hello World FIRSTNAME. Can change the text (Hello World) sending a new text as parameter',
+        'local_get_user_enrolment_id' => array(
+                'classname'   => 'local_additional_functions_external',
+                'methodname'  => 'get_user_enrolment_id',
+                'classpath'   => 'local/additional_functions/externallib.php',
+                'description' => 'Returns the user enrolment ID for the given course ID',
                 'type'        => 'read',
-        )
-);
-
-// We define the services to install as pre-build services. A pre-build service is not editable by administrator.
-$services = array(
-        'My service' => array(
-                'functions' => array ('local_wstemplate_hello_world'),
-                'restrictedusers' => 0,
-                'enabled'=>1,
         )
 );

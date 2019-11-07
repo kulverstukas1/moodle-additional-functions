@@ -14,58 +14,55 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * External Web Service Template
- *
- * @package    localwstemplate
- * @copyright  2011 Moodle Pty Ltd (http://moodle.com)
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * Additional functions plugin methods
+ * @author    Kulverstukas, http://9v.lt
+ * More info:
+ *   https://docs.moodle.org/dev/Enrolment_API
+ *   https://docs.moodle.org/dev/Adding_a_web_service_to_a_plugin
+ *   http://www.examulator.com/er/components/course.html
+ *   https://docs.moodle.org/dev/Tutorial
  */
-require_once($CFG->libdir . "/externallib.php");
+ 
+require_once($CFG->libdir.'/externallib.php');
 
-class local_wstemplate_external extends external_api {
+class local_additional_functions_external extends external_api {
 
-    /**
-     * Returns description of method parameters
-     * @return external_function_parameters
-     */
-    public static function hello_world_parameters() {
+    public static function get_user_enrolment_id_parameters() {
         return new external_function_parameters(
-                array('welcomemessage' => new external_value(PARAM_TEXT, 'The welcome message. By default it is "Hello world,"', VALUE_DEFAULT, 'Hello world, '))
+            array(
+                'course_id' => new external_value(PARAM_INT, 'The course ID to search at', VALUE_REQUIRED),
+                'user_id' => new external_value(PARAM_INT, 'The user ID to find', VALUE_REQUIRED)
+            )
         );
     }
+    
+    public static function get_user_enrolment_id($course_id, $user_id) {
+        global $USER, $DB;
+        
+        // parameter validation
+        $params = self::validate_parameters(
+            self::get_user_enrolment_id_parameters(),
+            array('course_id' => $course_id, 'user_id' => $user_id)
+        );
 
-    /**
-     * Returns welcome message
-     * @return string welcome message
-     */
-    public static function hello_world($welcomemessage = 'Hello world, ') {
-        global $USER;
-
-        //Parameter validation
-        //REQUIRED
-        $params = self::validate_parameters(self::hello_world_parameters(),
-                array('welcomemessage' => $welcomemessage));
-
-        //Context validation
-        //OPTIONAL but in most web service it should present
+        // context validation
         $context = get_context_instance(CONTEXT_USER, $USER->id);
         self::validate_context($context);
 
-        //Capability checking
-        //OPTIONAL but in most web service it should present
-        if (!has_capability('moodle/user:viewdetails', $context)) {
-            throw new moodle_exception('cannotviewprofile');
+        $ueid = $DB->get_record_sql(
+            'SELECT {user_enrolments}.enrolid AS enrolid, {user_enrolments}.userid AS userid, {enrol}.courseid AS courseid
+            FROM {user_enrolments}, {enrol}
+            WHERE {user_enrolments}.enrolid = {enrol}.id AND {enrol}.courseid = ? AND {user_enrolments}.userid = ?',
+            array($course_id, $user_id)
+        );
+        if ($ueid != null) {
+            return $ueid->enrolid;
         }
-
-        return $params['welcomemessage'] . $USER->firstname ;;
+        return null;
     }
 
-    /**
-     * Returns description of method result value
-     * @return external_description
-     */
-    public static function hello_world_returns() {
-        return new external_value(PARAM_TEXT, 'The welcome message + user first name');
+    public static function get_user_enrolment_id_returns() {
+        return new external_value(PARAM_INT, 'The user enrolment ID for the given course and user ID\'s');
     }
 
 
