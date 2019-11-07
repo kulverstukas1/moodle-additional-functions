@@ -50,13 +50,13 @@ class local_additional_functions_external extends external_api {
         self::validate_context($context);
 
         $ueid = $DB->get_record_sql(
-            'SELECT {user_enrolments}.enrolid AS enrolid, {user_enrolments}.userid AS userid, {enrol}.courseid AS courseid
+            'SELECT {user_enrolments}.id AS id, {user_enrolments}.enrolid AS enrolid, {user_enrolments}.userid AS userid, {enrol}.courseid AS courseid
             FROM {user_enrolments}, {enrol}
             WHERE {user_enrolments}.enrolid = {enrol}.id AND {enrol}.courseid = ? AND {user_enrolments}.userid = ?',
             array($course_id, $user_id)
         );
         if ($ueid != null) {
-            return $ueid->enrolid;
+            return $ueid->id;
         }
         return null;
     }
