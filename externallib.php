@@ -49,20 +49,20 @@ class local_additional_functions_external extends external_api {
         $context = get_context_instance(CONTEXT_USER, $USER->id);
         self::validate_context($context);
 
-        $ueid = $DB->get_record_sql(
-            'SELECT {user_enrolments}.id AS id, {user_enrolments}.enrolid AS enrolid, {user_enrolments}.userid AS userid, {enrol}.courseid AS courseid
+        $ueid = $DB->get_records_sql(
+            'SELECT {user_enrolments}.id AS id, {user_enrolments}.status AS status, {user_enrolments}.enrolid AS enrolid, {user_enrolments}.userid AS userid, {enrol}.courseid AS courseid
             FROM {user_enrolments}, {enrol}
             WHERE {user_enrolments}.enrolid = {enrol}.id AND {enrol}.courseid = ? AND {user_enrolments}.userid = ?',
             array($course_id, $user_id)
         );
-        if ($ueid != null) {
-            return $ueid->id;
+        if ($ueid) {
+            return json_encode(array_values($ueid));
         }
         return null;
     }
 
     public static function get_user_enrolment_id_returns() {
-        return new external_value(PARAM_INT, 'The user enrolment ID for the given course and user ID\'s');
+        return new external_value(PARAM_TEXT, 'The list of user enrolment IDs in JSON format for the given course and user ID');
     }
 
 
