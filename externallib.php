@@ -49,22 +49,38 @@ class local_additional_functions_external extends external_api {
         $context = get_context_instance(CONTEXT_USER, $USER->id);
         self::validate_context($context);
 
-        $ueid = $DB->get_records_sql(
+        $ueids = $DB->get_records_sql(
             'SELECT {user_enrolments}.id AS id, {user_enrolments}.status AS status, {user_enrolments}.enrolid AS enrolid, {user_enrolments}.userid AS userid, {enrol}.courseid AS courseid
             FROM {user_enrolments}, {enrol}
             WHERE {user_enrolments}.enrolid = {enrol}.id AND {enrol}.courseid = ? AND {user_enrolments}.userid = ?',
             array($course_id, $user_id)
         );
-        if ($ueid) {
-            return json_encode(array_values($ueid));
+     
+        if ($ueids) {
+            return array('userenrolmenids' => $ueids);
         }
-        return null;
+     
+        return array('userenrolmenids' => array());
     }
 
     public static function get_user_enrolment_id_returns() {
-        return new external_value(PARAM_TEXT, 'The list of user enrolment IDs in JSON format for the given course and user ID');
+        return new external_single_structure(
+            array(
+				            'userenrolmenids' => new external_multiple_structure(self::get_userenrolmentid_structure(), 'userenrolmentid')
+			         )
+		      );
     }
 
-
+    protected static function get_userenrolmentid_structure() {
+        $userenrolmentidstructure = array(
+            'id' => new external_value(PARAM_INT, 'user enrolment id'),
+            'status' => new external_value(PARAM_INT, 'enrolment status flag'),
+            'enrolid' => new external_value(PARAM_INT, 'enrol id'),
+            'userid' => new external_value(PARAM_INT, 'user id'),
+            'courseid' => new external_value(PARAM_INT, 'course id')
+        );
+       
+        return new external_single_structure($userenrolmentidstructure);
+    }
 
 }
