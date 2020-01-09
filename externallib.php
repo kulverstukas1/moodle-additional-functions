@@ -66,9 +66,9 @@ class local_additional_functions_external extends external_api {
     public static function get_user_enrolment_id_returns() {
         return new external_single_structure(
             array(
-				            'userenrolmenids' => new external_multiple_structure(self::get_userenrolmentid_structure(), 'userenrolmentid')
-			         )
-		      );
+                'userenrolmenids' => new external_multiple_structure(self::get_userenrolmentid_structure(), 'userenrolmentid')
+            )
+        );
     }
 
     protected static function get_userenrolmentid_structure() {
