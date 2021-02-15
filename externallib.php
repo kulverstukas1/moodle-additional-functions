@@ -65,6 +65,45 @@ class local_additional_functions_external extends external_api {
         return new external_value(PARAM_TEXT, 'The list of user enrolment IDs in JSON format for the given course and user ID');
     }
 
+    //========================================================
+    
+    public static function get_user_enrolment_dates_parameters() {
+        return new external_function_parameters(
+            array(
+                'course_id' => new external_value(PARAM_INT, 'The course ID to search at', VALUE_REQUIRED),
+                'user_id' => new external_value(PARAM_INT, 'The user ID to find', VALUE_REQUIRED)
+            )
+        );
+    }
 
-
+    public static function get_user_enrolment_dates($course_id, $user_id) {
+        global $USER, $DB;
+        
+        // parameter validation
+        $params = self::validate_parameters(
+            self::get_user_enrolment_dates_parameters(),
+            array('course_id' => $course_id, 'user_id' => $user_id)
+        );
+        
+        // context validation
+        $context = get_context_instance(CONTEXT_USER, $USER->id);
+        self::validate_context($context);
+        
+        $enrolDates = $DB->get_records_sql(
+            'SELECT {user_enrolments}.timestart AS timestart, {user_enrolments}.timeend AS timeend, {user_enrolments}.userid AS userid, {enrol}.courseid AS courseid
+            FROM {user_enrolments}, {enrol}
+            WHERE {user_enrolments}.enrolid = {enrol}.id AND {enrol}.courseid = ? AND {user_enrolments}.userid = ?',
+            array($course_id, $user_id)
+        );
+        
+        if ($enrolDates) {
+            return json_encode(array_values($enrolDates));
+        }
+        return null;
+    }
+    
+    public static function get_user_enrolment_dates_returns() {
+        return new external_value(PARAM_TEXT, 'The enrolment start and end dates in JSON format');
+    }
+    
 }

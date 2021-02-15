@@ -17,7 +17,7 @@
  * @author    Kulverstukas, http://9v.lt
  */
 
-$plugin->version  = 2019110501;
+$plugin->version  = 2021021501;
 $plugin->requires = 2010112400;
 $plugin->component = 'local_additional_functions';
 $plugin->cron     = 0;

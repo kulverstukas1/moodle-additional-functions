@@ -19,11 +19,19 @@
  */
  
 $functions = array(
-        'local_get_user_enrolment_id' => array(
-                'classname'   => 'local_additional_functions_external',
-                'methodname'  => 'get_user_enrolment_id',
-                'classpath'   => 'local/additional_functions/externallib.php',
-                'description' => 'Returns the user enrolment ID for the given course ID',
-                'type'        => 'read',
-        )
+    'local_get_user_enrolment_id' => array(
+        'classname'   => 'local_additional_functions_external',
+        'methodname'  => 'get_user_enrolment_id',
+        'classpath'   => 'local/additional_functions/externallib.php',
+        'description' => 'Returns the user enrolment ID for the given course ID',
+        'type'        => 'read',
+    ),
+    
+    'local_get_user_enrolment_dates' => array(
+        'classname'   => 'local_additional_functions_external',
+        'methodname'  => 'get_user_enrolment_dates',
+        'classpath'   => 'local/additional_functions/externallib.php',
+        'description' => 'Returns the user enrolment start and end dates for the given course ID',
+        'type'        => 'read',
+    )
 );
