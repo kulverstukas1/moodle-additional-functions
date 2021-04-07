@@ -35,7 +35,7 @@ class local_additional_functions_external extends external_api {
             )
         );
     }
-    
+
     public static function get_user_enrolment_id($course_id, $user_id) {
         global $USER, $DB;
         
@@ -66,11 +66,22 @@ class local_additional_functions_external extends external_api {
     public static function get_user_enrolment_id_returns() {
         return new external_single_structure(
             array(
-                'userenrolmenids' => new external_multiple_structure(self::get_userenrolmentid_structure(), 'userenrolmentid')
+                'userenrolmentids' => new external_multiple_structure(self::get_user_enrolment_id_structure(), 'userenrolmentid')
             )
         );
     }
    
+    protected static function get_user_enrolment_id_structure() {
+        $userEnrolmentIdStructure = array(
+            'id' => new external_value(PARAM_INT, 'user enrolment id'),
+            'status' => new external_value(PARAM_INT, 'enrolment status flag'),
+            'enrolid' => new external_value(PARAM_INT, 'enrol id'),
+            'userid' => new external_value(PARAM_INT, 'user id'),
+            'courseid' => new external_value(PARAM_INT, 'course id')
+        );
+        return new external_single_structure($userEnrolmentIdStructure);
+    }
+
     //========================================================
     
     public static function get_user_enrolment_dates_parameters() {
@@ -94,7 +105,7 @@ class local_additional_functions_external extends external_api {
         // context validation
         $context = get_context_instance(CONTEXT_USER, $USER->id);
         self::validate_context($context);
-        
+               
         $enrolDates = $DB->get_records_sql(
             'SELECT {user_enrolments}.timestart AS timestart, {user_enrolments}.timeend AS timeend, {user_enrolments}.userid AS userid, {enrol}.courseid AS courseid
             FROM {user_enrolments}, {enrol}
@@ -109,7 +120,21 @@ class local_additional_functions_external extends external_api {
     }
     
     public static function get_user_enrolment_dates_returns() {
-        return new external_value(PARAM_TEXT, 'The enrolment start and end dates in JSON format');
+        return new external_single_structure(
+            array(
+                'userenrolmentdates' => new external_multiple_structure(self::get_user_enrolment_dates_structure(), 'userenrolmentdate')
+            )
+        );
+    }
+    
+    protected static function get_user_enrolment_dates_structure() {
+        $userEnrolmentDateStructure = array(
+            'timestart' => new external_value(PARAM_INT, 'user enrolment start time'),
+            'timeend' => new external_value(PARAM_INT, 'user enrolment end time'),
+            'userid' => new external_value(PARAM_INT, 'user id'),
+            'courseid' => new external_value(PARAM_INT, 'course id')
+        );
+        return new external_single_structure($userEnrolmentDateStructure);
     }
     
 }
