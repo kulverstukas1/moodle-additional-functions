@@ -57,29 +57,14 @@ class local_additional_functions_external extends external_api {
         );
      
         if ($ueids) {
-            return array('userenrolmenids' => $ueids);
+            return json_encode(array_values($ueids));
         }
      
-        return array('userenrolmenids' => array());
+        return null;
     }
 
     public static function get_user_enrolment_id_returns() {
-        return new external_single_structure(
-            array(
-                'userenrolmentids' => new external_multiple_structure(self::get_user_enrolment_id_structure(), 'userenrolmentid')
-            )
-        );
-    }
-   
-    protected static function get_user_enrolment_id_structure() {
-        $userEnrolmentIdStructure = array(
-            'id' => new external_value(PARAM_INT, 'user enrolment id'),
-            'status' => new external_value(PARAM_INT, 'enrolment status flag'),
-            'enrolid' => new external_value(PARAM_INT, 'enrol id'),
-            'userid' => new external_value(PARAM_INT, 'user id'),
-            'courseid' => new external_value(PARAM_INT, 'course id')
-        );
-        return new external_single_structure($userEnrolmentIdStructure);
+        return new external_value(PARAM_TEXT, 'The list of user enrolment IDs in JSON format for the given course and user ID');
     }
 
     //========================================================
@@ -120,21 +105,7 @@ class local_additional_functions_external extends external_api {
     }
     
     public static function get_user_enrolment_dates_returns() {
-        return new external_single_structure(
-            array(
-                'userenrolmentdates' => new external_multiple_structure(self::get_user_enrolment_dates_structure(), 'userenrolmentdate')
-            )
-        );
-    }
-    
-    protected static function get_user_enrolment_dates_structure() {
-        $userEnrolmentDateStructure = array(
-            'timestart' => new external_value(PARAM_INT, 'user enrolment start time'),
-            'timeend' => new external_value(PARAM_INT, 'user enrolment end time'),
-            'userid' => new external_value(PARAM_INT, 'user id'),
-            'courseid' => new external_value(PARAM_INT, 'course id')
-        );
-        return new external_single_structure($userEnrolmentDateStructure);
+        return new external_value(PARAM_TEXT, 'The enrolment start and end dates in JSON format');
     }
     
 }
