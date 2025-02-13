@@ -46,7 +46,7 @@ class local_additional_functions_external extends external_api {
         );
 
         // context validation
-        $context = get_context_instance(CONTEXT_USER, $USER->id);
+        $context = context_user::instance($USER->id);
         self::validate_context($context);
 
         $ueids = $DB->get_records_sql(
@@ -88,7 +88,7 @@ class local_additional_functions_external extends external_api {
         );
         
         // context validation
-        $context = get_context_instance(CONTEXT_USER, $USER->id);
+        $context = context_user::instance($USER->id);
         self::validate_context($context);
                
         $enrolDates = $DB->get_records_sql(
