@@ -108,4 +108,94 @@ class local_additional_functions_external extends external_api {
         return new external_value(PARAM_TEXT, 'The enrolment start and end dates in JSON format');
     }
     
+    //========================================================
+
+    public static function get_user_recent_courses_parameters() {
+        return new external_function_parameters(
+            array('usernames' => new external_value(PARAM_TEXT, 'The usernames to search for in JSON format', VALUE_REQUIRED))
+        );
+    }
+
+    public static function get_user_recent_courses($usernames) {
+        global $USER, $DB;
+        
+        // parameter validation
+        $params = self::validate_parameters(
+            self::get_user_recent_courses_parameters(),
+            array('usernames' => $usernames)
+        );
+        
+        // context validation
+        $context = context_user::instance($USER->id);
+        self::validate_context($context);
+
+        $usernamesArr = json_decode($usernames);
+
+        $courseLastAccess = array();
+        if ($usernamesArr) {
+            [$insql, $inparams] = $DB->get_in_or_equal($usernamesArr);
+            $iter = $DB->get_recordset_sql(
+                "SELECT {user_lastaccess}.id, {user}.username as username, {course}.shortname as shortname, {user_lastaccess}.timeaccess as course_access_time
+                FROM {user}, {course}, {user_lastaccess}
+                WHERE {user}.username $insql AND {user_lastaccess}.userid = {user}.id AND {user_lastaccess}.courseid = {course}.id AND {course}.shortname NOT LIKE '-%'
+                ORDER BY course_access_time DESC",
+                $inparams
+            );
+            
+            foreach ($iter as $i) {
+                $courseLastAccess[$i->username][] = $i;
+            }
+        }
+        
+        return json_encode($courseLastAccess);
+    }
+
+    public static function get_user_recent_courses_returns() {
+        return new external_value(PARAM_TEXT, 'The course last access information with username, shortname and Unix time');
+    }
+
+    //========================================================
+    
+    public static function get_user_last_access_parameters() {
+        return new external_function_parameters(
+            array('usernames' => new external_value(PARAM_TEXT, 'The usernames to search for in JSON format', VALUE_REQUIRED))
+        );
+    }
+
+    public static function get_user_last_access($usernames) {
+        global $USER, $DB;
+        
+        // parameter validation
+        $params = self::validate_parameters(
+            self::get_user_last_access_parameters(),
+            array('usernames' => $usernames)
+        );
+        
+        // context validation
+        $context = context_user::instance($USER->id);
+        self::validate_context($context);
+        
+        $usernamesArr = json_decode($usernames);
+        
+        $courseLastAccess = array();
+        if ($usernamesArr) {
+            [$insql, $inparams] = $DB->get_in_or_equal($usernamesArr);
+            $iter = $DB->get_recordset_sql(
+                "SELECT username, lastaccess
+                FROM {user}
+                WHERE username $insql",
+                $inparams
+            );
+            
+            foreach ($iter as $i) {
+                $courseLastAccess[$i->username] = $i->lastaccess;
+            }
+        }
+        return json_encode($courseLastAccess);
+    }
+
+    public static function get_user_last_access_returns() {
+        return new external_value(PARAM_TEXT, 'The course last access information grouped by username');
+    }
+
 }

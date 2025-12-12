@@ -33,5 +33,21 @@ $functions = array(
         'classpath'   => 'local/additional_functions/externallib.php',
         'description' => 'Returns the user enrolment start and end dates for the given course ID',
         'type'        => 'read',
+    ),
+
+    'local_get_user_recent_courses' => array(
+        'classname'   => 'local_additional_functions_external',
+        'methodname'  => 'get_user_recent_courses',
+        'classpath'   => 'local/additional_functions/externallib.php',
+        'description' => 'Returns the list of courses a user has visited',
+        'type'        => 'read',
+    ),
+    
+    'local_get_user_last_access' => array(
+        'classname'   => 'local_additional_functions_external',
+        'methodname'  => 'get_user_last_access',
+        'classpath'   => 'local/additional_functions/externallib.php',
+        'description' => 'Returns the last access value from the user table by username',
+        'type'        => 'read',
     )
 );
